@@ -161,6 +161,10 @@ type Notify struct {
 	// be the best exit node for the current network conditions.
 	SuggestedExitNode *tailcfg.StableNodeID `json:",omitzero"`
 
+	// PushNotifications, if non-nil, contains new push notifications
+	// received from subscribed peers via the pushnotify extension.
+	PushNotifications []PushNotification `json:",omitzero"`
+
 	// type is mirrored in xcode/IPN/Core/LocalAPI/Model/LocalAPIModel.swift
 }
 
@@ -203,6 +207,9 @@ func (n Notify) String() string {
 	if n.SuggestedExitNode != nil {
 		fmt.Fprintf(&sb, "SuggestedExitNode=%v ", *n.SuggestedExitNode)
 	}
+	if len(n.PushNotifications) != 0 {
+		fmt.Fprintf(&sb, "PushNotifications(%d) ", len(n.PushNotifications))
+	}
 
 	s := sb.String()
 	if s == "Notify{" {
@@ -241,6 +248,30 @@ type OutgoingFile struct {
 	Sent         int64                // bytes copied thus far
 	Finished     bool                 // indicates whether or not the transfer finished
 	Succeeded    bool                 // for a finished transfer, indicates whether or not it was successful
+}
+
+// PushNotification is a push notification received from a subscribed peer.
+type PushNotification struct {
+	// FromPeerID identifies the peer that sent the notification.
+	FromPeerID tailcfg.StableNodeID `json:"fromPeerID"`
+
+	// ID is the notification's monotonic identifier on the source device.
+	ID uint64 `json:"id"`
+
+	// Timestamp is when the notification was created on the source device.
+	Timestamp time.Time `json:"timestamp"`
+
+	// Title is a short summary of the notification.
+	Title string `json:"title"`
+
+	// Body is the full notification text.
+	Body string `json:"body,omitempty"`
+
+	// Category is an optional classification (e.g. "alert", "info").
+	Category string `json:"category,omitempty"`
+
+	// Meta holds optional key-value metadata.
+	Meta map[string]string `json:"meta,omitempty"`
 }
 
 // StateKey is an opaque identifier for a set of LocalBackend state

@@ -1539,6 +1539,13 @@ type CapGrant struct {
 type PeerCapability string
 
 const (
+	// PeerCapabilityNotifySend grants the ability to poll notifications from
+	// a peer that has PeerCapabilityNotifyTarget.
+	PeerCapabilityNotifySend PeerCapability = "https://tailscale.com/cap/notify-send"
+	// PeerCapabilityNotifyTarget grants the current node the ability to be
+	// polled for notifications by peers with PeerCapabilityNotifySend.
+	PeerCapabilityNotifyTarget PeerCapability = "https://tailscale.com/cap/notify-target"
+
 	// PeerCapabilityFileSharingTarget grants the current node the ability to send
 	// files to the peer which has this capability.
 	PeerCapabilityFileSharingTarget PeerCapability = "https://tailscale.com/cap/file-sharing-target"
